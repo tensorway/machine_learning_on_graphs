@@ -113,3 +113,41 @@ def agregate_sum_mean(pointer_graph, data, niter):
         # print(datalist)
         data.x = torch.cat(datalist, dim=0)
 
+
+
+
+def bfs(graph, node, pointer_graph=None, pointer_inorout=0):
+    vals = torch.zeros(graph.x.shape[0], 1)-1
+    if pointer_graph is None:
+        pg = create_pointer_graph(graph)
+    else:
+        pg = pointer_graph
+    
+    expanded, toexpand, newset = set(), set(), set()
+    toexpand.add(node)
+    vals[node, 0] = 0
+    step = 1
+    lastlen = len(expanded)+1
+
+    while lastlen != len(expanded):
+        lastlen = len(expanded)
+        for toex in toexpand:
+            for candidate in pg[toex][pointer_inorout]:
+                if candidate not in expanded and candidate not in toexpand and candidate not in newset:
+                    vals[candidate] = vals[candidate]*0 + step
+                    newset.add(candidate)
+            expanded.add(toex)
+        toexpand = newset
+        newset = set()
+        step += 1
+
+    return vals
+
+def get_diamenter(graph, pointer_graph=None, pointer_inorout=0):
+    max_dist = -1
+    for node in range(graph.num_nodes):
+        vals = bfs(graph, node, pointer_graph, pointer_inorout)
+        max = torch.max(vals)
+        if max_dist < max:
+            max_dist = max
+    return max_dist
