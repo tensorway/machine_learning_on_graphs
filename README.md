@@ -3,4 +3,4 @@
 implementation of Graph Convolutional Network(GCN), DeepWalk, louvain algorithm and many more.
 Not much else to say.
 
-!(){gif.gif)
+![]{gif.gif)
